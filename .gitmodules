@@ -1,0 +1,3 @@
+[submodule "software/ttt"]
+	path = software/ttt
+	url = git@github.com:glandfried/trueskill.py.git
