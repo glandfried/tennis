@@ -9,33 +9,33 @@ sys.path.append('../../../software/ttt/')
 import src as th
 from importlib import reload  # Python 3.4+ only.
 reload(th)
-env = th.TrueSkill(draw_probability=0,tau=(25/3)/365,beta=4.33,epsilon=0.1)
+env = th.TrueSkill(draw_probability=0,tau=1,beta=4.33,epsilon=0.1)
 import ipdb
 
 # Data
 df = pd.read_csv('history.csv')
-
+df.sort_values('time_end', inplace=True)
 
 results = [[0,1]] * df.shape[0] 
 composition = [[[w1,w2],[l1,l2]] if d else [[w1],[w2]] for w1, w2, l1, l2, d in zip(df.winner_player_1, df.winner_player_2, df.looser_player_1, df.looser_player_2, df.double) ]   
-batch  =  (pd.to_datetime(df.time_start,format='%Y-%m-%d')- pd.to_datetime('1978-07-01',format='%Y-%m-%d')).dt.days
+batch  =  (pd.to_datetime(df.time_end,format='%Y-%m-%d')- pd.to_datetime('1970-01-01',format='%Y-%m-%d')).dt.days
 
 history= env.history(composition, results,batch)
 history.through_time(online=False)
 history.convergence()
 
 ipdb.set_trace()
-
-w1_mean = [ history.match_time[m].posteriors[w1].mu for m, w1 in zip(df.match_id, df.winner_player_1) ]
-w1_std = [ history.match_time[m].posteriors[w1].sigma for m, w1 in zip(df.match_id, df.winner_player_1) ]
-l1_mean = [ history.match_time[m].posteriors[l1].mu for m, l1 in zip(df.match_id, df.winner_looser_1) ]
-l1_std = [ history.match_time[m].posteriors[l1].sigma for m, l1 in zip(df.match_id, df.winner_looser_1) ]
-w2_mean = [ history.match_time[m].posteriors[w2].mu if d else None for m, w2, d in zip(df.match_id, df.winner_player_2, df.double) ]
-w2_std = [ history.match_time[m].posteriors[w2].mu if d else None for m, w2, d in zip(df.match_id, df.winner_player_2, df.double) ]
-l2_mean = [ history.match_time[m].posteriors[l2].mu if d else None for m, l2, d in zip(df.match_id, df.looser_player_2, df.double) ]
-l2_std = [ history.match_time[m].posteriors[l2].mu if d else None for m, l2, d in zip(df.match_id, df.looser_player_2, df.double) ]
+match_id = list(range(len(df.match_id)))
+w1_mean = [ history.match_time[m].posteriors[w1].mu for m, w1 in zip(match_id, df.winner_player_1) ]
+w1_std = [ history.match_time[m].posteriors[w1].sigma for m, w1 in zip(match_id, df.winner_player_1) ]
+l1_mean = [ history.match_time[m].posteriors[l1].mu for m, l1 in zip(match_id, df.winner_looser_1) ]
+l1_std = [ history.match_time[m].posteriors[l1].sigma for m, l1 in zip(match_id, df.winner_looser_1) ]
+w2_mean = [ history.match_time[m].posteriors[w2].mu if d else None for m, w2, d in zip(match_id, df.winner_player_2, df.double) ]
+w2_std = [ history.match_time[m].posteriors[w2].mu if d else None for m, w2, d in zip(match_id, df.winner_player_2, df.double) ]
+l2_mean = [ history.match_time[m].posteriors[l2].mu if d else None for m, l2, d in zip(match_id, df.looser_player_2, df.double) ]
+l2_std = [ history.match_time[m].posteriors[l2].mu if d else None for m, l2, d in zip(match_id, df.looser_player_2, df.double) ]
 evidence = [ history.match_time[m].match_evidence[m] for m in df.match_id] 
-last_evidence = [ history.match_time[m].match_last_evidence[m] for m in df.match_id] 
+last_evidence = [ history.match_time[m].match_last_evidence[m] for m in match_id] 
 
 df["w1_mean"] = w1_mean
 df["w1_std"] = w1_std
