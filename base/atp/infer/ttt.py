@@ -3,22 +3,26 @@ name = os.path.basename(__file__).split(".py")[0]
 ##################
 #import time
 import pandas as pd
+import numpy as np
 import sys
 sys.path.append('../../../software/ttt/')
 #import numpy as np
 import src as th
 from importlib import reload  # Python 3.4+ only.
 reload(th)
-env = th.TrueSkill(draw_probability=0,tau=1,beta=4.33,epsilon=0.1)
+env = th.TrueSkill(draw_probability=0,tau=(25/3)/(365),beta=4.33,epsilon=0.1)
 import ipdb
 
 # Data
 df = pd.read_csv('history.csv')
-df.sort_values('time_end', inplace=True)
+df.sort_values(['time_start','time_end'], inplace=True)
+df.reset_index(inplace=True)
+fecha = [e  if pd.isna(s) else (s if pd.isna(e) else min(s,e))   for s, e in zip(df.time_start,df.time_end) ]
+pd.to_datetime(fecha,format='%Y-%m-%d')
 
 results = [[0,1]] * df.shape[0] 
 composition = [[[w1,w2],[l1,l2]] if d else [[w1],[w2]] for w1, w2, l1, l2, d in zip(df.winner_player_1, df.winner_player_2, df.looser_player_1, df.looser_player_2, df.double) ]   
-batch  =  (pd.to_datetime(df.time_end,format='%Y-%m-%d')- pd.to_datetime('1970-01-01',format='%Y-%m-%d')).dt.days
+batch  =  (pd.to_datetime(fecha,format='%Y-%m-%d')- pd.to_datetime('1910-01-01',format='%Y-%m-%d')).dt.days
 
 history= env.history(composition, results,batch)
 history.through_time(online=False)
