@@ -1,3 +1,4 @@
+def kelly
 
 def static_bets(n=1000,initial=20,max_bet=1,odd=1.5,p=0.6,comision=0.05):
     """

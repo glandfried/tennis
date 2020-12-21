@@ -1,3 +1,6 @@
 [submodule "software/ttt"]
 	path = software/ttt
 	url = git@github.com:glandfried/trueskill.py.git
+[submodule "software/TrueSkill.jl"]
+	path = software/TrueSkill.jl
+	url = git@github.com:glandfried/TrueSkill.jl.git
