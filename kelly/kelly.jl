@@ -1,11 +1,18 @@
 include("../software/TrueSkill.jl/src/TrueSkill.jl")
+#include("../../TrueSkill.jl/src/TrueSkill.jl")
 using .TrueSkill
-global const ttt = TrueSkill
+global ttt = TrueSkill
 using CSV
 using Dates
 using DataFrames
+#using JLD2
+
 
 data = CSV.read("../base/atp/history.csv")
+
+#Carreira
+#10^(-101100/(length(data.double) - sum(data.double .== "t")))
+
 times = Dates.value.(data[:,"time_start"] .- Date("1900-1-1")) .- data.round_number
 insert!(data, 10, times, :day)
 data = sort!(data, [:day], rev=(false))
@@ -107,8 +114,7 @@ CSV.write("output/optimum_trueskill_estimation.csv", df; header=true)
 GC.gc()
 h = ttt.History(events, results, data.day, prior_dict, ttt.Environment(mu=0.0,sigma=2.,beta=1.,gamma=0.04,iter=1,epsilon=0.1), true)
 
-w1 = [e.teams[1].items[1].agent for b in h.batches for e in b.events]
-w1 == data.winner_player_1
+#h = ttt.History(events[1:2000], results[1:2000], data.day[1:2000], prior_dict, ttt.Environment(mu=0.0,sigma=2.,beta=1.,gamma=0.04,iter=1,epsilon=0.1), true)
 
 m_w1 = [b.skills[e.teams[1].items[1].agent].online.mu for b in h.batches for e in b.events]
 s_w1 = [b.skills[e.teams[1].items[1].agent].online.sigma for b in h.batches for e in b.events]
@@ -124,6 +130,7 @@ s_l2 = [ (length(e.teams[1].items) == 2) ? b.skills[e.teams[2].items[2].agent].o
 
 df = DataFrame(
     id = data.match_id
+    ,double = data.double
     ,w1 = data.winner_player_1
     ,w2 = data.winner_player_2
     ,l1 = data.looser_player_1
@@ -135,6 +142,5 @@ df = DataFrame(
     ,m_l1 = m_l1
     ,s_l1 = s_l1
     ,m_l2 = m_l2
-    ,s_l2 = s_l2
-    ,odds = 1.0./prior_prediction )
+    ,s_l2 = s_l2)
 CSV.write("output/ttt_2_0.04_online_estimation.csv", df; header=true)
