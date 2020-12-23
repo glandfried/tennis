@@ -47,6 +47,8 @@ s_l1 = [b.skills[e.teams[2].items[1].agent].online.sigma for b in h.batches for 
 m_l2 = [ (length(e.teams[1].items) == 2) ? b.skills[e.teams[2].items[2].agent].online.mu : missing for b in h.batches for e in b.events]
 s_l2 = [ (length(e.teams[1].items) == 2) ? b.skills[e.teams[2].items[2].agent].online.sigma : missing for b in h.batches for e in b.events]
 
+evidence = [ (length(b.events[e].teams[1].items) == 2) ? ttt.Game([[ttt.Rating(m_w1[e],s_w1[e],1.0), ttt.Rating(m_w2[e],s_w2[e],1.0)],[ttt.Rating(m_l1[e],s_l1[e],1.0), ttt.Rating(m_l2[e],s_l2[e],1.0)]],[0,1],0.0).evidence : ttt.Game([[ttt.Rating(m_w1[e],s_w1[e],1.0)],[ttt.Rating(m_l1[e],s_l1[e],1.0)]],[0,1],0.0).evidence for b in h.batches for e in 1:length(b.events)]
+
 df = DataFrame(
     id = data.match_id
     ,double = data.double
@@ -54,6 +56,7 @@ df = DataFrame(
     ,w2 = data.winner_player_2
     ,l1 = data.looser_player_1
     ,l2 = data.looser_player_2
+    ,odds = 1.0 ./ evidence 
     ,m_w1 = m_w1
     ,s_w1 = s_w1
     ,m_w2 = m_w2
