@@ -1,8 +1,16 @@
-def kelly
+import numpy as np
+import matplotlib.pyplot as plt
+
+def kelly(odd_w, p_w):
+    x = (odd_w-1)
+    l = (x*p_w - (1-p_w))/x
+    return l
+
 
 def static_bets(n=1000,initial=20,max_bet=1,odd=1.5,p=0.6,comision=0.05):
     """
     plt.plot(static_bets(initial=20))
+    plt.show()
     """
     odd2=1/((1-(1/odd))+comision/2)
     odd1=1/((1/odd)+(comision/2))
@@ -36,7 +44,8 @@ def show_static_bets(m=33,n=350,initial=2,max_bet=0.1,p_odd=0.85,p=0.8,comision=
     plt.plot([0,n],[initial,initial+n*(expected-max_bet)])
     plt.plot(np.mean(res,axis=0),color="black")
     return res
-    
+
+
 def set_bet(w,max_bet):
     if w <= max_bet:
         bet=w/2
