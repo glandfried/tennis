@@ -3,10 +3,13 @@ m.match_id
 ,e.double
 ,m.round_number
 ,m.winner_player_1
-,w1.player_name
+,w1.player_name as w1_name
 ,m.winner_player_2
+,w2.player_name as w2_name
 ,m.looser_player_1
+,l1.player_name as l1_name
 ,m.looser_player_2
+,l2.player_name as l2_name
 ,e.time_start
 ,e.time_end
 ,e.ground
