@@ -1,0 +1,70 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+
+\input{../../aux/tex/encabezado.tex}
+
+%opening
+\title{Kelly criterion}
+\author{Gustavo Landfried}
+
+\begin{document}
+
+\maketitle
+
+\section{}
+
+Definiciones:
+\begin{align*}
+V_N & := \text{Capital at time } N \\
+V_0 & := \text{initial capital} \\
+r & := \text{the exponentiation growth (continuous) rate} \\
+L &:= \text{number of losses} \\
+W &:= \text{number of wins} \\
+l & := \text{capital invested (proportion)} \\
+x & := \text{odds as } (\text{probability}^{-1})
+\end{align*}
+
+Proceso multiplicativo:
+\begin{align}
+ V_N & = V_0 (1+r)^N = V_0 (1-l)^L (1+xl)^W \\
+\end{align}
+
+Tomo logaritmo de ambos lados
+\begin{align}
+ \log V_0 (1+r)^N = \log V_0 (1-l)^L (1+xl)^W \\
+\end{align}
+
+Simplifico
+\begin{align}
+ N \log (1+r) &= L \log (1-l) + W \log (1+xl) \\
+ \log (1+r) &= \frac{L}{N} \log (1-l) + \frac{W}{N} \log (1+xl) \\
+\end{align}
+
+En el límite $N \rightarrow \infty$
+\begin{align}
+ \log (1+r) &= p \log (1-l) + (1-p) \log (1+xl) \\
+\end{align}
+
+Sabiendo que esta función es cóncava en $l$, por lo que podemos maximizar el $r$ encontrnado su punto crítico en $l$.
+\begin{align}
+0 &= \frac{\delta}{\delta l} p \log (1-l) + (1-p) \log (1+xl) \\
+\end{align}
+
+Resolviendo (donde $\overset{*}{=}$ vale por la derivada).
+\begin{align}
+0 &\overset{*}{=} - \frac{x (p+l-1) + p}{(1-l)(xl+1)} \\
+0 &=  x (p+l-1) + p \\
+0 &=  xp+xl-x + p \\
+x - xp - p &=  xl \\
+x(1 - p) - p &=  xl \\
+\end{align}
+
+El resultado es
+\begin{align}
+ l = \frac{x(1 - p) - p}{x}
+\end{align}
+
+
+
+
+\end{document}
